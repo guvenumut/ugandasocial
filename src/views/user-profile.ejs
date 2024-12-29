@@ -1,0 +1,126 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle fs-1"></i>
+                        </div>
+                        <div>
+                            <h4 class="card-title mb-1"><%= user.username %></h4>
+                            <p class="text-muted mb-0" style="font-size: 12px;">Üyelik tarihi: <%= new Date(user.createdAt).toLocaleDateString('tr-TR') %></p>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="mb-2">
+                            <strong>Paylaşım Sayısı:</strong> <%= posts.length %>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Toplam Beğeni:</strong> <%= totalLikes %>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Toplam Yorum:</strong> <%= totalComments %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h3 class="mb-4"><%= user.username %>'in Paylaşımları</h3>
+            <% posts.forEach(post => { %>
+                <div class="card mb-4">
+                    <div class="card-header p-2 bg-white border-bottom-0">
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">
+                                <i class="fas fa-user-circle fs-4"></i>
+                            </div>
+                            <strong class="card-username"><%= user.username %></strong>
+                        </div>
+                    </div>
+                    <img src="/uploads/<%= post.imageUrl %>" class="card-img-top" alt="Post Image">
+                    <div class="card-body">
+                        <p class="card-text"><%= post.caption %></p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <button class="btn btn-link like-btn p-0 me-3 text-decoration-none" data-post-id="<%= post._id %>">
+                                    <i class="fas fa-heart <%= post.likes.includes(currentUser._id) ? 'text-danger' : 'text-dark' %>"></i>
+                                    <span class="likes-count text-dark"><%= post.likes.length %></span>
+                                </button>
+                                <button class="btn btn-link comment-btn p-0 text-decoration-none" data-bs-toggle="collapse" data-bs-target="#comments-<%= post._id %>">
+                                    <i class="fas fa-comment text-dark"></i>
+                                    <span class="comments-count text-dark"><%= post.comments.length %></span>
+                                </button>
+                            </div>
+                            <small class="text-muted"><%= new Date(post.createdAt).toLocaleDateString('tr-TR') %></small>
+                        </div>
+                    </div>
+                    <div class="collapse" id="comments-<%= post._id %>">
+                        <div class="card-footer">
+                            <% post.comments.forEach(comment => { %>
+                                <div class="mb-2">
+                                    <a href="/user/<%= comment.user.username %>" class="text-decoration-none">
+                                        <strong><%= comment.user.username %></strong>
+                                    </a>: <%= comment.text %>
+                                </div>
+                            <% }) %>
+                            <form class="mt-3" action="/post/<%= post._id %>/comment" method="POST">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="text" placeholder="Yorum yaz...">
+                                    <button class="btn btn-primary" type="submit">Gönder</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const postId = this.dataset.postId;
+            const icon = this.querySelector('i');
+            const count = this.querySelector('.likes-count');
+
+            fetch(`/post/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ postId: postId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.liked) {
+                    icon.classList.remove('text-dark');
+                    icon.classList.add('text-danger');
+                } else {
+                    icon.classList.remove('text-danger');
+                    icon.classList.add('text-dark');
+                }
+                count.textContent = data.count;
+
+                // Toplam beğeni sayısını güncelle
+                const totalLikesElement = document.querySelector('.stats .mb-2:nth-child(2)');
+                const currentTotalLikes = parseInt(totalLikesElement.textContent.match(/\d+/)[0]);
+                const newTotalLikes = data.liked ? currentTotalLikes + 1 : currentTotalLikes - 1;
+                totalLikesElement.innerHTML = `<strong>Toplam Beğeni:</strong> ${newTotalLikes}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Beğeni işlemi sırasında bir hata oluştu');
+            });
+        });
+    });
+});
+</script> 

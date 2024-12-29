@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arkadaşlar Arası Paylaşım</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #fafafa;
+        }
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,.1);
+            margin-bottom: 2rem;
+        }
+        .card {
+            margin-bottom: 16px;
+            border-radius: 3px;
+            border: 1px solid #dbdbdb;
+            background-color: #ffffff;
+            box-shadow: none;
+            max-width: 470px;
+            margin-left: auto;
+            margin-right: auto;
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: #ffffff;
+            border-bottom: none;
+            padding: 8px 12px;
+        }
+        .card-username {
+            font-size: 13px;
+            color: #262626;
+        }
+        .image-container {
+            width: 100%;
+            height: 470px;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+        .card-img-top {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .profile-posts .card {
+            max-width: 100%;
+            margin-bottom: 0;
+        }
+        .profile-posts .image-container {
+            width: 100%;
+            padding-bottom: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+        }
+        .profile-posts .card-img-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .profile-posts .card-body {
+            padding: 8px;
+        }
+        .profile-posts .card-text {
+            font-size: 12px;
+            margin-bottom: 6px;
+            max-height: 3em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .profile-posts .btn-danger {
+            padding: 2px 6px;
+            font-size: 10px;
+        }
+        .card-body {
+            padding: 8px 12px;
+        }
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .card-text {
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: #262626;
+        }
+        .like-btn, .comment-btn {
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 13px;
+            padding: 0;
+            background: none;
+            border: none;
+        }
+        .like-btn:hover {
+            color: #ed4956;
+        }
+        .comment-btn:hover {
+            color: #0095f6;
+        }
+        .alert {
+            margin-bottom: 16px;
+            border-radius: 3px;
+            max-width: 470px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .text-muted {
+            font-size: 11px;
+            color: #8e8e8e !important;
+        }
+        .card-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #efefef;
+            padding: 8px 12px;
+        }
+        .input-group {
+            border: 1px solid #efefef;
+            border-radius: 3px;
+        }
+        .form-control {
+            border: none;
+            font-size: 13px;
+            padding: 4px 8px;
+        }
+        .form-control:focus {
+            box-shadow: none;
+        }
+        .btn-primary {
+            background-color: #0095f6;
+            border: none;
+            font-size: 13px;
+            padding: 4px 8px;
+        }
+        .btn-primary:hover {
+            background-color: #1877f2;
+        }
+        .btn-danger {
+            font-size: 11px;
+            padding: 3px 6px;
+        }
+        .fa-user-circle {
+            color: #8e8e8e;
+        }
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 12px;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            .image-container {
+                height: 350px;
+            }
+            .profile-posts .image-container {
+                padding-bottom: 100%;
+            }
+            .alert {
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .profile-posts .card-text {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Arkadaşlar Arası</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/post/new"><i class="fas fa-plus"></i> Yeni Paylaşım</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profilim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="/logout"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <% if (messages.success) { %>
+            <div class="alert alert-success">
+                <%= messages.success %>
+            </div>
+        <% } %>
+        <% if (messages.error) { %>
+            <div class="alert alert-danger">
+                <%= messages.error %>
+            </div>
+        <% } %>
+        <%- body %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+    function likePost(button, postId) {
+        const icon = button.querySelector('i');
+        const count = button.querySelector('.likes-count');
+        
+        fetch(`/post/${postId}/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.liked) {
+                icon.classList.remove('text-dark');
+                icon.classList.add('text-danger');
+            } else {
+                icon.classList.remove('text-danger');
+                icon.classList.add('text-dark');
+            }
+            count.textContent = data.count;
+
+            const totalLikesElement = document.querySelector('.stats .mb-2:nth-child(2)');
+            if (totalLikesElement) {
+                const currentTotalLikes = parseInt(totalLikesElement.textContent.match(/\d+/)[0]);
+                const newTotalLikes = data.liked ? currentTotalLikes + 1 : currentTotalLikes - 1;
+                totalLikesElement.innerHTML = `<strong>Toplam Beğeni:</strong> ${newTotalLikes}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Beğeni işlemi sırasında bir hata oluştu');
+        });
+    }
+
+    function deletePost(postId) {
+        if (confirm('Bu paylaşımı silmek istediğinize emin misiniz?')) {
+            fetch(`/post/${postId}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const postCard = document.getElementById(`post-${postId}`);
+                    if (postCard) {
+                        postCard.remove();
+                        
+                        const statsContainer = document.querySelector('.stats');
+                        if (statsContainer) {
+                            const postCountElement = statsContainer.querySelector('.mb-2:nth-child(1)');
+                            const currentCount = parseInt(postCountElement.textContent.match(/\d+/)[0]);
+                            postCountElement.innerHTML = `<strong>Paylaşım Sayısı:</strong> ${currentCount - 1}`;
+                        }
+
+                        alert(data.message || 'Paylaşım başarıyla silindi');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.error || 'Paylaşım silinirken bir hata oluştu');
+            });
+        }
+    }
+    </script>
+</body>
+</html> 
+</html> 

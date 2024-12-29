@@ -1,0 +1,46 @@
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">Yeni Paylaşım</h3>
+            </div>
+            <div class="card-body">
+                <form action="/post/new" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Resim Seç</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="caption" class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="caption" name="caption" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Paylaş</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.createElement('img');
+            preview.src = e.target.result;
+            preview.style.maxWidth = '100%';
+            preview.style.marginTop = '10px';
+            preview.className = 'img-thumbnail';
+            
+            const existingPreview = document.querySelector('.img-thumbnail');
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+            
+            document.querySelector('.mb-3').appendChild(preview);
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script> 

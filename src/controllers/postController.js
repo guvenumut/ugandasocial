@@ -43,6 +43,8 @@ const getAllPosts = async (req, res) => {
 
 const createPost = async (req, res) => {
     try {
+        
+        
         const post = new Post({
             user: req.session.userId,
             imageUrl: req.file.filename,

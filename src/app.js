@@ -27,6 +27,15 @@ app.use('/', authRoutes);
 app.use('/post', postRoutes);
 app.use('/user', userRoutes);
 
+app.use((req, res, next) => {
+    if(res.statusCode === 404 && req.session.userId){
+        res.redirect('/');
+    }
+    else{
+        res.redirect('/login');
+    }
+});
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Bir şeyler ters gitti!');

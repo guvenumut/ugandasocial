@@ -29,16 +29,47 @@
                         
                         <div class="collapse" id="comments-<%= post._id %>">
                             <div class="card card-body p-2 mb-2">
-                                <% post.comments.forEach(comment => { %>
-                                    <div class="d-flex mb-2">
-                                        <strong class="me-2"><%= comment.user.username %>:</strong>
-                                        <span><%= comment.text %></span>
+                                <% post.comments.forEach(function(comment) { %>
+                                    <div class="comment-container">
+                                        <div class="comment-text">
+                                            <strong><%= comment.user.username %>:</strong> <%= comment.content %>
+                                            <button class="reply-button" onclick="toggleReplyForm('<%= comment._id %>')">
+                                                <i class="fas fa-reply"></i> Yanıtla
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="replies-<%= comment._id %>">
+                                            <% comment.replies.forEach(function(reply) { %>
+                                                <div class="reply-container">
+                                                    <a href="/user/<%= reply.user.username %>" class="text-dark text-decoration-none">
+                                                        <strong><%= reply.user.username %></strong>
+                                                    </a>: <%= reply.content %>
+                                                    <small class="text-muted ms-2">
+                                                        <%= new Date(reply.createdAt).toLocaleString('tr-TR', { 
+                                                            hour: '2-digit', 
+                                                            minute: '2-digit'
+                                                        }) %>
+                                                    </small>
+                                                </div>
+                                            <% }); %>
+                                        </div>
+
+                                        <form id="reply-form-<%= comment._id %>" class="reply-form" 
+                                              onsubmit="submitReply('<%= post._id %>', '<%= comment._id %>', event)">
+                                            <div class="input-group">
+                                                <input type="text" name="replyContent" class="form-control" 
+                                                       placeholder="Yanıtınızı yazın..." required>
+                                                <button type="submit" class="btn btn-primary btn-sm">Gönder</button>
+                                            </div>
+                                        </form>
                                     </div>
-                                <% }) %>
-                                <form action="/post/<%= post._id %>/comment" method="POST" class="mt-2">
+                                <% }); %>
+                                
+                                <form action="/post/<%= post._id %>/comment" method="POST">
                                     <div class="input-group">
-                                        <input type="text" name="text" class="form-control form-control-sm" placeholder="Yorum yaz...">
-                                        <button type="submit" class="btn btn-primary btn-sm">Gönder</button>
+                                        <input type="text" name="content" class="form-control" 
+                                               placeholder="Yorum yazın..." required minlength="1">
+                                        <button type="submit" class="btn btn-primary">Gönder</button>
                                     </div>
                                 </form>
                             </div>

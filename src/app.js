@@ -20,12 +20,20 @@ configureApp(app);
 
 app.use(sessionMiddleware);
 
+app.use((req, res, next) => {
+    res.locals.currentUser = req.session.userId ? req.session.userId : null;
+    next();
+});
+
 app.get('/', isAuthenticated, postController.getAllPosts);
 app.get('/profile', isAuthenticated, userController.getProfile);
 
 app.use('/', authRoutes);
 app.use('/post', postRoutes);
 app.use('/user', userRoutes);
+
+
+
 
 app.use((req, res, next) => {
     if(res.statusCode === 404 && req.session.userId){

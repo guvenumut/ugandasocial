@@ -9,6 +9,7 @@ const getAllPosts = async (req, res) => {
         const posts = await Post.find()
             .populate('user')
             .populate('comments.user')
+            .populate('comments.replies.user')
             .sort('-createdAt');
         
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -132,16 +133,36 @@ const likePost = async (req, res) => {
 
 const addComment = async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
-        post.comments.push({
-            user: req.session.userId,
-            text: req.body.text
-        });
-        await post.save();
+        const content = req.body.content ? req.body.content.trim() : '';
+        if (!content) {
+            req.flash('error', 'Yorum içeriği boş olamaz');
+            return res.redirect('/');
+        }
+
+        const post = await Post.findByIdAndUpdate(
+            req.params.id,
+            {
+                $push: {
+                    comments: {
+                        user: req.session.userId,
+                        content: content,
+                        replies: [],
+                        createdAt: new Date()
+                    }
+                }
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!post) {
+            req.flash('error', 'Gönderi bulunamadı');
+            return res.redirect('/');
+        }
+
         req.flash('success', 'Yorum başarıyla eklendi');
         res.redirect('/');
     } catch (error) {
-        console.error(error);
+        console.error('Comment error:', error);
         req.flash('error', 'Yorum eklenirken bir hata oluştu');
         res.redirect('/');
     }
